@@ -1,14 +1,31 @@
 {
-    "cid": "CID_028_Athena_Commando_F",
-    "bid": "BID_023_Pinkbear",
-    "eid": "EID_NoDance",
-    "pickaxe_id": "Pickaxe_Lockjaw",
-    "banner": "otherbanner51",
-    "banner_colour": "defaultcolor15",
-    "level": 999,
-    "bp_tier": 999999999,
-    "status": "discord.gg/fnpy",
-    "platform": "WIN",
-    "debug": false,
-    "friend_accept": true
-}
+    "Account": {
+      "Email": "email@email.com",
+      "Prefix": "!"
+    },
+    "Control": {
+      "Give full access to": ["Your Account ID"],
+      "Public Bot": "false" 
+    },
+    "Party": {
+      "Cosmetics": {
+        "Banner": {
+          "Banner Color": "defaultcolor1",
+          "Banner Name": "BRSeason01",
+          "Season Level": 493,
+          "battle pass tier": 493
+        },
+        "Skin": "CID_028_Athena_Commando_F",
+        "Backpack": "BID_023_Pinkbear",
+        "Pickaxe": "HalloweenScythe",
+        "Emote": "EID_CloudFloat"
+      },
+      "Platform": "WIN",
+      "Join party on invitation": "false", 
+      "Status":"Made with silverbot"
+      
+},
+    "Friends": {
+      "Accept all friend requests": "false" 
+    }
+  }
