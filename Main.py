@@ -1,83 +1,58 @@
-try:
-    import uvloop
-except ImportError:
-    pass
-else:
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+import fortnitepy
+import json
+import os
 
-if sys.platform == 'win32':
-    asyncio.set_event_loop(asyncio.ProactorEventLoop())
+from fortnitepy.ext import commands
 
+email = 'email@email.com'
+password = 'password1'
+filename = 'device_auths.json'
 
-def enable_debug() -> None:
-    modules = {
-        'fortnitepy.http': 6,
-        'fortnitepy.xmpp': 5
-    }
-    
-    for module, colour in module.items():
-        logger = logging.getLogger(module)
-        logger.setLevel(level=logging.DEBUG)
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setFormatter(logging.Formatter(f'\u001b[3{colour}m %(asctime)s:%(levelname)s:%(name)s: %(message)s'
-                                               ' \u001b[0m'))
-        logger.addHandler(handler)
+def get_device_auth_details():
+    if os.path.isfile(filename):
+        with open(filename, 'r') as fp:
+            return json.load(fp)
+    return {}
 
+def store_device_auth_details(email, details):
+    existing = get_device_auth_details()
+    existing[email] = details
+
+    with open(filename, 'w') as fp:
+        json.dump(existing, fp)
+
+device_auth_details = get_device_auth_details().get(email, {})
+bot = commands.Bot(
+    command_prefix='!',
+    auth=fortnitepy.AdvancedAuth(
+        email=email,
+        password=password,
+        prompt_authorization_code=True,
+        prompt_code_if_invalid=True,
+        delete_existing_device_auths=True,
+        **device_auth_details
+    )
+)
+
+@bot.event
+async def event_device_auth_generate(details, email):
+    store_device_auth_details(email, details)
+
+@bot.event
+async def event_ready():
+    print('----------------')
+    print('Bot ready as')
+    print(bot.user.display_name)
+    print(bot.user.id)
+    print('----------------')
+
+@bot.event
+async def event_friend_request(request):
+    await request.accept()
+
+@bot.command()
+async def hello(ctx):
+    await ctx.send('Hello!')
+
+bot.run()
         
-async def main() -> None:
-    settings = partybot.BotSettings()
-
-    await settings.load_settings_from_file('config.json')
-
-    if settings.debug:
-        enable_debug()
-
-    async with aiohttp.ClientSession() as session:
-        async with session.request(
-            method="GET",
-            url="https://partybot.net/api/discord"
-        ) as r:
-            invite = (await r.json())['invite'] if r.status == 200 else "8heARRB"
-
-    print(crayons.cyan(f"[PartyBot] [{datetime.datetime.now().strftime('%H:%M:%S')}] PartyBot made by xMistt. "
-                       'Massive credit to Terbau for creating the library.'))
-    print(crayons.cyan(f"[PartyBot] [{datetime.datetime.now().strftime('%H:%M:%S')}] Discord server: "
-                       f"https://discord.gg/{invite} - For support, questions, etc."))
-
-    device_auths = partybot.DeviceAuths(
-        filename='device_auths.json'
-    )
-
-    try:
-        await device_auths.load_device_auths()
-    except partybot.errors.MissingDeviceAuth:
-        print(f"[PartyBot] [{datetime.datetime.now().strftime('%H:%M:%S')}] Automatically opening Epic Games login, "
-              f"please sign in.")
-
-        gen = partybot.EpicGenerator()
-        new_device_auths = await gen.generate_device_auths()
-        device_auths.set_device_auth(
-            **new_device_auths
-        )
-
-        await device_auths.save_device_auths()
-
-    client = partybot.PartyBot(
-        settings=settings,
-        device_auths=device_auths
-    )
-
-    client.add_cog(partybot.CosmeticCommands(client))
-    client.add_cog(partybot.PartyCommands(client))
-    client.add_cog(partybot.ClientCommands(client))
-
-    try:
-        await client.start()
-    except fortnitepy.errors.AuthException as e:
-        print(crayons.red(client.message % f"[ERROR] {e}"))
-
-    await client.http.close()
-
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
