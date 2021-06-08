@@ -10,10 +10,10 @@
     "Party": {
       "Cosmetics": {
         "Banner": {
-          "Banner Color": "defaultcolor1",
+          "Banner Color": "defaultcolor40",
           "Banner Name": "BRSeason01",
-          "Season Level": 493,
-          "battle pass tier": 493
+          "Season Level": 100,
+          "battle pass tier": 100
         },
         "Skin": "CID_028_Athena_Commando_F",
         "Backpack": "BID_023_Pinkbear",
@@ -22,8 +22,7 @@
       },
       "Platform": "WIN",
       "Join party on invitation": "false", 
-      "Status":"Made with silverbot"
-      
+      "Status":"Made with Wonderbot    
 },
     "Friends": {
       "Accept all friend requests": "false" 
