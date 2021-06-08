@@ -1,2 +1,0 @@
-# WonderBot
-Fortnite lobbybot project 
