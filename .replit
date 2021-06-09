@@ -1,2 +1,2 @@
 Language = "python3"
-run = ""
+run = "pip install -r requirements.txt\npython auto_update.py\n python3 main.py"
